@@ -55,6 +55,14 @@ const AuthMiddleware = {
         }
     },
     isAdmin: async (req, res, next) => {
+        if(!req.user) {
+            return res.status(500).json({
+                success: false,
+                message: 'Oops somethings goes wrong',
+                data: null
+            })
+        }
+        
         const { userType } = req.user
         if(userType !== 'admin'){
             return res.status(401).json({
