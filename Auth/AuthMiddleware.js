@@ -54,6 +54,26 @@ const AuthMiddleware = {
             })
         }
     },
+    isModerator: async (req, res, next) => {
+        if(!req.user) {
+            return res.status(500).json({
+                success: false,
+                message: 'Oops somethings goes wrong',
+                data: null
+            })
+        }
+
+        const { userType } = req.user
+        if(userType !== 'admin' && userType !== 'moderator'){
+            return res.status(401).json({
+                success: false,
+                message: 'Authorization denied',
+                data: null
+            })
+        } else {
+            next()
+        }
+    },
     isAdmin: async (req, res, next) => {
         if(!req.user) {
             return res.status(500).json({
