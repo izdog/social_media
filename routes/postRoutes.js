@@ -7,7 +7,7 @@ const postRouter = express.Router()
 
 postRouter.route('/').get(PostController.findAll)
 
-postRouter.route('/articles').post(PostController.createArticle)
+postRouter.route('/articles').post(AuthMiddleware.isAuth,PostController.createArticle)
 
 postRouter.route('/:id').delete(PostController.delete)
 

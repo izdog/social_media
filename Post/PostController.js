@@ -1,3 +1,4 @@
+import User from '../User/UserModel.js'
 import {ArticlePost, MemePost, Post} from './PostModel.js'
 
 const PostController = {
@@ -37,8 +38,10 @@ const PostController = {
 
     createArticle: async (req, res) => {
         try {
-            const {title, content, slug} = req.body
-            if(!title || !content || !slug){
+            console.log(req.user)
+            const user = req.user ? req.user : null
+            const {title, content, slug } = req.body
+            if(!title || !content || !slug || !user){
                 return res.status(400).json({
                     success: false,
                     message: 'Not all fields have been entered.',
@@ -49,9 +52,13 @@ const PostController = {
             const newArticle = new ArticlePost({
                 title,
                 content,
-                slug
+                slug,
+                posted_by: user._id
             })
             const savedArticle = await newArticle.save()
+            const posts = req.user.posts
+            posts.push(savedArticle._id)
+            await User.findOneAndUpdate({_id: req.user._id}, {posts})
 
             return res.status(200).json({
                 success: true,
@@ -95,8 +102,10 @@ const PostController = {
     },
     findAll: async (req, res) => {
         try {
-            const posts = await Post.find()
-
+            const posts = await Post.find({})
+                .populate('posted_by', 'firstname lastname user_id _id email')
+                .sort({created_at: -1})
+            
             if(posts.length === 0){
                 return res.status(404).json({
                     success: false,

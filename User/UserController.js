@@ -1,6 +1,6 @@
 import User from './UserModel.js'
 import bcrypt from 'bcrypt'
-import jwt from 'jsonwebtoken'
+
 
 
 export const UserController = {
@@ -77,7 +77,7 @@ export const UserController = {
     },
     find: async (req, res) => {
         try {
-            const user = await User.findOne({user_id: req.params.id})
+            const user = await User.findOne({user_id: req.params.id}).populate('posts')
             if(!user){
                 return res.status(404).json({
                     success: false,
@@ -92,6 +92,7 @@ export const UserController = {
                 data: user
             })
         } catch(err){
+            console.log(err)
             return res.status(500).json({
                 success: false,
                 message: 'Oops somethings goes wrong.',

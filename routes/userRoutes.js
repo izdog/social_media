@@ -6,7 +6,8 @@ import AuthMiddleware from '../Auth/AuthMiddleware.js'
 const userRouter = express.Router()
 
 userRouter.route('/').get(AuthMiddleware.isAuth, AuthMiddleware.isAdmin, errorHandler.catchErrors(UserController.findAll))
-userRouter.route('/:id').get(AuthMiddleware.isAuth, AuthMiddleware.isAdmin, errorHandler.catchErrors(UserController.find))
+// userRouter.route('/:id').get(AuthMiddleware.isAuth, AuthMiddleware.isAdmin, errorHandler.catchErrors(UserController.find))
+userRouter.route('/:id').get(errorHandler.catchErrors(UserController.find))
 
 userRouter.route('/').post(errorHandler.catchErrors(UserController.register))
 userRouter.route('/create').post(AuthMiddleware.isAuth, AuthMiddleware.isAdmin, errorHandler.catchErrors(UserController.create))
