@@ -1,5 +1,6 @@
 import User from '../User/UserModel.js'
 import {ArticlePost, MemePost, Post} from './PostModel.js'
+import Like from '../Like/LikeModel.js'
 
 const PostController = {
     createMeme: async (req, res) => {
@@ -55,7 +56,13 @@ const PostController = {
                 slug,
                 posted_by: user._id
             })
+            
             const savedArticle = await newArticle.save()
+            const newLike = new Like({
+                post_id: savedArticle._id
+            })
+            await newLike.save()
+
             const posts = req.user.posts
             posts.push(savedArticle._id)
             await User.findOneAndUpdate({_id: req.user._id}, {posts})

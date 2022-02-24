@@ -10,7 +10,7 @@ const UserSchema = new mongoose.Schema({
     lastname: {type: String},
     password: {type: String, required: true},
     email: {type: String, required: true, unique: true, lowercase: true},
-    userType: {type: String, enum: ['user', 'admin'], default: 'user'},
+    userType: {type: String, enum: ['user', 'admin', 'moderator'], default: 'user'},
     posts: [{type: Schema.Types.ObjectId, ref: 'Post'}]
 })
 

@@ -5,6 +5,7 @@ import 'dotenv/config'
 import userRouter from './routes/userRoutes.js'
 import authRouter from './routes/authRoutes.js'
 import postRouter from './routes/postRoutes.js'
+import likeRouter from './routes/likeRoutes.js'
 
 
 const app = express()
@@ -22,6 +23,7 @@ app.use((req, res, next) => {
 
 // Routes
 
+app.use('/api/v1/test', likeRouter)
 app.use('/api/v1/users', userRouter)
 app.use('/api/v1/posts', postRouter)
 app.use('/api/v1/auth', authRouter)
