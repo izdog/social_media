@@ -61,12 +61,12 @@ const PostController = {
             const newLike = new Like({
                 post_id: savedArticle._id
             })
-            await newLike.save()
+            const savedLike = await newLike.save()
 
             const posts = req.user.posts
             posts.push(savedArticle._id)
             await User.findOneAndUpdate({_id: req.user._id}, {posts})
-
+            await Post.findOneAndUpdate({_id: savedArticle._id}, {post_likes: savedLike._id})
             return res.status(200).json({
                 success: true,
                 message: 'Article successfully created',
@@ -111,6 +111,7 @@ const PostController = {
         try {
             const posts = await Post.find({})
                 .populate('posted_by', 'firstname lastname user_id _id email')
+                .populate('post_likes')
                 .sort({created_at: -1})
             
             if(posts.length === 0){

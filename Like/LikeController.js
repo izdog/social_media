@@ -5,7 +5,6 @@ const LikeController = {
         try {
             const { post_id, user_id } = req.body
             const postLikes = await Like.findOne({post_id: post_id})
-            let {userLikes, userDislikes} = postLikes
             
             if(!postLikes){
                 return res.status(404).json({
@@ -13,7 +12,7 @@ const LikeController = {
                     message: `No document found by this id ${post_id}`
                 })
             }
-            const {newUserLikes, newUserDislikes} = removeAddElement(userLikes, userDislikes, user_id)
+            const {newUserLikes, newUserDislikes} = getNewUserLikesAndDislikes(postLikes, user_id)
             
             console.log(newUserLikes, newUserDislikes)
             const result = await postLikes.updateOne({userDislikes: newUserDislikes, userLikes: newUserLikes})
@@ -24,7 +23,7 @@ const LikeController = {
             })
 
         }catch(err) {
-            console.log(err.message)
+            console.log(err)
             return res.status(500).json({
                 success: false,
                 message: 'Oops somethings goes wrong.',
@@ -37,25 +36,40 @@ const LikeController = {
     }
 }
 
-function removeAddElement(add,remove, user_id){
-    let array1 = add
-    let array2 = remove
-    const isPresentIn1 = array1.includes(user_id)
-    const isPresentIn2 = array2.includes(user_id)
 
-    if(!isPresentIn1) {
+/**
+ * 
+ * @param {Array} postLikes 
+ * @param {Boolean} like_clicked if the user click on Like default(true)
+ * @returns {Object}
+ */
+function getNewUserLikesAndDislikes(postLikes, user_id, like_clicked = true){
+    const {userLikes, userDislikes} = postLikes
+    let array1, array2
+    if(like_clicked){
+        array1 = [...userLikes]
+        array2 = [...userDislikes]
+    } else {
+        array1 = [...userDislikes]
+        array2 = [...userLikes]
+    }
+
+    if(!array1.includes(user_id)){
         array1.push(user_id)
-        if(isPresentIn2){
-            array2 = array2.filter(el => el  !== user_id)
+        if(array2.includes(user_id)){
+            array2.splice(array2.indexOf(user_id), 1)
         }
     } else {
-        array1 = array1.filter(el => el !== user_id)
+        array1.splice(array1.indexOf(user_id), 1)
     }
 
     return {
-        array1,
-        array2
+        newUserLikes: like_clicked ? array1 : array2,
+        newUserDislikes: like_clicked ? array2 : array1 
     }
+
 }
+
+
 
 export default LikeController
