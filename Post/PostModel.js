@@ -15,7 +15,8 @@ const PostSchema = new mongoose.Schema({
     created_at: {type: Date, default: Date.now()},
     updated_at: {type: Date},
     posted_by: {type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true},
-    post_likes: {type: mongoose.Schema.Types.ObjectId, ref: 'Like'}
+    post_likes: {type: mongoose.Schema.Types.ObjectId, ref: 'Like'},
+    comments: [{type: mongoose.Schema.Types.ObjectId, ref: 'Comment'}]
 }, options)
 
 PostSchema.plugin(AutoIncrement, {inc_field: 'post_id'})

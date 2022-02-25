@@ -36,10 +36,9 @@ const PostController = {
             })
         }
     },
-
     createArticle: async (req, res) => {
         try {
-            console.log(req.user)
+            
             const user = req.user ? req.user : null
             const {title, content, slug } = req.body
             if(!title || !content || !slug || !user){
@@ -61,17 +60,18 @@ const PostController = {
             const newLike = new Like({
                 post_id: savedArticle._id
             })
+
             const savedLike = await newLike.save()
 
-            const posts = req.user.posts
-            posts.push(savedArticle._id)
-            await User.findOneAndUpdate({_id: req.user._id}, {posts})
+            await User.findOneAndUpdate({_id: req.user._id}, {$push: {posts: savedArticle._id}})
             await Post.findOneAndUpdate({_id: savedArticle._id}, {post_likes: savedLike._id})
+
             return res.status(200).json({
                 success: true,
                 message: 'Article successfully created',
                 data: savedArticle
             })
+
         } catch(err) {
             console.error(err.message)
             return res.status(500).json({
@@ -112,6 +112,7 @@ const PostController = {
             const posts = await Post.find({})
                 .populate('posted_by', 'firstname lastname user_id _id email')
                 .populate('post_likes')
+                .populate('comments')
                 .sort({created_at: -1})
             
             if(posts.length === 0){

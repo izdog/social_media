@@ -6,6 +6,7 @@ import userRouter from './routes/userRoutes.js'
 import authRouter from './routes/authRoutes.js'
 import postRouter from './routes/postRoutes.js'
 import likeRouter from './routes/likeRoutes.js'
+import commentRouter from './routes/commentRoutes.js'
 
 
 const app = express()
@@ -26,6 +27,7 @@ app.use((req, res, next) => {
 app.use('/api/v1/test', likeRouter)
 app.use('/api/v1/users', userRouter)
 app.use('/api/v1/posts', postRouter)
+app.use('/api/v1/comments', commentRouter)
 app.use('/api/v1/auth', authRouter)
 
 app.use(errorHandler.notFound)
