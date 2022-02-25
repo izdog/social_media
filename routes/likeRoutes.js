@@ -5,6 +5,7 @@ import LikeController from "../Like/LikeController.js";
 
 const likeRouter = express.Router()
 
-likeRouter.route('/like').put(AuthMiddleware.isAuth, LikeController.like)
+likeRouter.route('/like').put(AuthMiddleware.isAuth, errorHandler.catchErrors(LikeController.like))
+likeRouter.route('/dislike').put(AuthMiddleware.isAuth, errorHandler.catchErrors(LikeController.dislike))
 
 export default likeRouter

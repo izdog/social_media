@@ -5,10 +5,10 @@ import PostController from '../Post/PostController.js'
 
 const postRouter = express.Router()
 
-postRouter.route('/').get(PostController.findAll)
+postRouter.route('/').get(errorHandler.catchErrors(PostController.findAll))
 
-postRouter.route('/articles').post(AuthMiddleware.isAuth,PostController.createArticle)
+postRouter.route('/articles').post(AuthMiddleware.isAuth,errorHandler.catchErrors(PostController.createArticle))
 
-postRouter.route('/:id').delete(PostController.delete)
+postRouter.route('/:id').delete(errorHandler.catchErrors(PostController.delete))
 
 export default postRouter
