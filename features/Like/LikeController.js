@@ -2,8 +2,10 @@ import Like from './LikeModel.js'
 
 const LikeController = {
     like: async (req, res) => {
-        try {
-            const { post_id, user_id } = req.body
+        try {            
+            const post_id  = req.params.id
+            const { user_id } = req.body
+
             const postLikes = await Like.findOne({post_id: post_id})
             
             if(!postLikes){
@@ -68,6 +70,7 @@ const LikeController = {
 /**
  * 
  * @param {Array} postLikes 
+ * @param {ObjectId} user_id 
  * @param {Boolean} like_clicked if the user click on Like default(true)
  * @returns {Object}
  */
