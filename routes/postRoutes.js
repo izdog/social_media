@@ -1,7 +1,7 @@
 import express from "express";
 import errorHandler from "../handler/errorHandler.js";
-import AuthMiddleware from '../Auth/AuthMiddleware.js'
-import PostController from '../Post/PostController.js'
+import AuthMiddleware from '../features/Auth/AuthMiddleware.js'
+import PostController from '../features/Post/PostController.js'
 
 const postRouter = express.Router()
 

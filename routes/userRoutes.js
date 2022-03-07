@@ -1,7 +1,7 @@
 import express from "express";
 import errorHandler from "../handler/errorHandler.js";
-import { UserController } from '../User/UserController.js'
-import AuthMiddleware from '../Auth/AuthMiddleware.js'
+import { UserController } from '../features/User/UserController.js'
+import AuthMiddleware from '../features/Auth/AuthMiddleware.js'
 
 const userRouter = express.Router()
 
