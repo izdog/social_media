@@ -1,18 +1,18 @@
 import multer from "multer";
-import bcrypt from 'bcrypt'
+import uniqid from 'uniqid';
 
 const MIME_TYPES = {
-    'images/jpg': 'jpg',
-    'images/jpeg': 'jpg',
-    'images/png': 'png'
+    'image/jpg': 'jpg',
+    'image/jpeg': 'jpg',
+    'image/png': 'png'
 }
 
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
-        cb(null, 'public/images')
+        cb(null, 'public/images/')
     },
     filename: (req, file, cb) => {
-        const name = bcrypt.hashSync(file.originalname.split(' ').join('_'), 5)
+        const name = uniqid()
         const extension = MIME_TYPES[file.mimetype]
         cb(null, `${name}.${extension}`)
     }

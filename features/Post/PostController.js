@@ -5,28 +5,29 @@ import Like from '../Like/LikeModel.js'
 const PostController = {
     createMeme: async (req, res) => {
         try {
-            const {title, url, url_description, slug} = req.body
-            if(!title || !url || !url_description, !slug) {
-                return res.status(400).json({
-                    success: false,
-                    message: 'Not all fields have been entered.',
-                    data: null
-                })
-            }
-
+            const user = req.user ? req.user : null
             const newMeme = new MemePost({
-                title,
-                slug,
-                url,
-                url_description
+                ...req.body,
+                url: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`,
+                posted_by: user
+                
             })
             const savedMeme = await newMeme.save()
+            const newLikes = new Like({
+                post_id: savedMeme._id
+            })
+
+            const savedLikes = await newLikes.save()
+            await User.findOneAndUpdate({_id: req.user._id}, {$push: {posts: savedMeme._id}})
+            await Post.findOneAndUpdate({_id: savedMeme._id}, {post_likes: savedLikes._id})
+
 
             return res.status(200).json({
                 success: true,
                 message: 'Successfully created Meme',
-                data: null
+                data: savedMeme
             })
+
         } catch(err) {
             console.error(err.message)
             return res.status(500).json({
@@ -77,6 +78,65 @@ const PostController = {
             return res.status(500).json({
                 success: false,
                 message: 'Oops somethings goes wrong.',
+                data: null
+            })
+        }
+    },
+    updateMeme: async (req, res) => {
+        try {
+            const result = await MemePost.findOneAndUpdate(
+                {post_id: req.params.id},
+                {...req.body, updated_at: Date.now()},
+                {returnOriginal: false}
+            )
+            if(!result){
+                return res.status(404).json({
+                    success: false,
+                    message: `No document found by this id ${req.params.id}`,
+                    data: null
+                })
+            }
+
+            return res.status(200).json({
+                success: true,
+                message: 'Document has been modified',
+                data: result
+            })
+
+        } catch(err) {
+            console.error(err.message)
+            return res.status(500).json({
+                success: false,
+                message: 'Oops something goes wrong.',
+                data: null
+            })
+        }
+    },
+    updateArticle: async (req, res) => {
+        try {
+            const result = await ArticlePost.findOneAndUpdate(
+                {post_id: req.params.id}, 
+                {...req.body, updated_at: Date.now()},
+                {returnOriginal: false}
+            )
+            if(!result){
+                return res.status(404).json({
+                    success: false,
+                    message: `No document found by this id ${req.params.id}`,
+                    data: null
+                })
+            }
+
+            return res.status(200).json({
+                success: true,
+                message: 'Document has been modified',
+                data: result
+            })
+        } catch(err) {
+            console.error(err.message)
+            return res.status(500).json({
+                success: false,
+                message: 'Oops something goes wrong.',
                 data: null
             })
         }
