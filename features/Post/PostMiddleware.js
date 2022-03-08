@@ -19,3 +19,4 @@ const storage = multer.diskStorage({
 })
 
 export default multer({storage}).single('image')
+

@@ -19,5 +19,5 @@ postRouter.route('/meme/:id').put(AuthMiddleware.isAuth, errorHandler.catchError
 postRouter.route('/:id/like').put(AuthMiddleware.isAuth, errorHandler.catchErrors(LikeController.like))
 postRouter.route('/:id/dislike').put(AuthMiddleware.isAuth, errorHandler.catchErrors(LikeController.dislike))
 
-postRouter.route('/:id').delete(errorHandler.catchErrors(PostController.delete))
+postRouter.route('/:id').delete(AuthMiddleware.isAuth,errorHandler.catchErrors(PostController.delete))
 export default postRouter

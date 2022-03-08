@@ -25,7 +25,7 @@ const AuthMiddleware = {
                 })
             }
     
-            const user = await User.findOne({user_id: verified.id}, 'firstname lastname _id user_id email posts')
+            const user = await User.findOne({user_id: verified.id}, 'firstname lastname _id user_id email posts userType')
             if(!user){
                 return res.status(401).json({
                     success: false,

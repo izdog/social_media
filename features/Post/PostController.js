@@ -8,7 +8,7 @@ const PostController = {
             const user = req.user ? req.user : null
             const newMeme = new MemePost({
                 ...req.body,
-                url: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`,
+                url: `${req.protocol}://${req.get('host')}/public/images/${req.file.filename}`,
                 posted_by: user
                 
             })
@@ -84,9 +84,27 @@ const PostController = {
     },
     updateMeme: async (req, res) => {
         try {
+            let filter
+            if(req.user.userType === 'user'){
+                filter = {
+                    post_id: req.params.id,
+                    posted_by: req.user._id
+                }
+            } else {
+                filter = {post_id: req.params.id}
+            }
+            const memeObject = req.file ? {
+                ...req.body,
+                url: `${req.protocol}://${req.get('host')}/public/images/${req.file.filename}`,
+                updated_at: Date.now()
+            } : {
+                ...req.body,
+                updated_at: Date.now()
+            }
+            
             const result = await MemePost.findOneAndUpdate(
-                {post_id: req.params.id},
-                {...req.body, updated_at: Date.now()},
+                filter,
+                memeObject,
                 {returnOriginal: false}
             )
             if(!result){
@@ -114,8 +132,18 @@ const PostController = {
     },
     updateArticle: async (req, res) => {
         try {
+            let filter
+            if(req.user === 'user'){
+                filter = {
+                    post_id: req.params.id,
+                    posted_by: req.user._id
+                }
+            } else {
+                filter = { post_id: req.params.id}
+            }
+
             const result = await ArticlePost.findOneAndUpdate(
-                {post_id: req.params.id}, 
+                filter, 
                 {...req.body, updated_at: Date.now()},
                 {returnOriginal: false}
             )
@@ -143,7 +171,19 @@ const PostController = {
     },
     delete: async (req, res) => {
         try {
-            const result = await Post.findOneAndDelete({post_id: req.params.id}).exec()
+            let filter
+            if(req.user.userType === 'user'){
+                filter = {
+                    post_id: req.params.id,
+                    posted_by: req.user._id
+                }
+            } else {
+                filter = {
+                    post_id: req.params.id
+                }
+            }
+
+            const result = await Post.findOneAndDelete(filter).exec()
 
             if(!result){
                 return res.status(404).json({
